@@ -2,7 +2,7 @@ const chatBox = document.getElementById("chat-box");
 const userInput = document.getElementById("user-input");
 const API_URL = "https://straitai-backend.onrender.com/api/chat";
 
-function sendMessage() {
+async function sendMessage() {
     let message = userInput.value.trim();
     if (message === "") return;
 
@@ -10,30 +10,41 @@ function sendMessage() {
     displayMessage("User", message, "user-message");
     userInput.value = "";
 
-    // Show AI "thinking..." animation
+    // Show AI "thinking..." message
     let thinkingMessage = displayMessage("Strait-AI", "AI is thinking...", "bot-message");
 
-    // Send message to backend
-    fetch(API_URL, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ query: message })
-    })
-    .then(response => {
-        if (!response.ok) throw new Error("Network response was not ok");
-        return response.json();
-    })
-    .then(data => {
-        // Remove thinking message
+    try {
+        // Add timeout support for the fetch request
+        const response = await fetchWithTimeout(API_URL, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ query: message })
+        });
+
+        if (!response.ok) {
+            // Handle HTTP errors
+            throw new Error(`Server error: ${response.status} ${response.statusText}`);
+        }
+
+        const data = await response.json();
+        if (!data.response) {
+            // Handle missing response field in backend JSON
+            throw new Error("Unexpected response format from the AI.");
+        }
+
+        // Remove "thinking..." message and display AI response
         chatBox.removeChild(thinkingMessage);
-        // Display AI response
         displayMessage("Strait-AI", data.response, "bot-message");
-    })
-    .catch(error => {
+    } catch (error) {
+        // Handle errors gracefully
         chatBox.removeChild(thinkingMessage);
-        displayMessage("Strait-AI", "Error: Could not connect to AI.", "bot-message");
-        console.error("Error:", error);
-    });
+        displayMessage(
+            "Strait-AI",
+            `Error: ${error.message || "An unknown error occurred."}`,
+            "bot-message"
+        );
+        console.error("Error details:", error);
+    }
 }
 
 function displayMessage(name, text, type) {
@@ -51,4 +62,14 @@ function displayMessage(name, text, type) {
     chatBox.appendChild(messageDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
     return messageDiv;
+}
+
+// Utility function: Fetch with timeout
+function fetchWithTimeout(url, options, timeout = 30000) {
+    return Promise.race([
+        fetch(url, options),
+        new Promise((_, reject) => 
+            setTimeout(() => reject(new Error("Request timed out")), timeout)
+        )
+    ]);
 }
