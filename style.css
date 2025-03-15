@@ -18,25 +18,27 @@ body {
     justify-content: center;
     height: 100vh;
     text-align: center;
+    overflow: hidden;
 }
 
 /* Chat Container */
 .chat-container {
     width: 400px;
-    background: #1e1e1e;
-    border-radius: 10px;
-    box-shadow: 0px 4px 10px rgba(255, 255, 255, 0.2);
+    background: linear-gradient(145deg, #1e1e1e, #2a2a2a);
+    border-radius: 15px;
+    box-shadow: 0px 5px 20px rgba(0, 0, 0, 0.5);
     display: flex;
     flex-direction: column;
-    overflow: hidden;
     padding: 15px;
 }
 
 /* Header */
 h1 {
     font-size: 2.5rem;
+    color: #ff6f50;
     opacity: 0;
     animation: fadeIn 1s ease-in-out forwards;
+    margin-bottom: 10px;
 }
 
 /* Chat Box */
@@ -46,26 +48,29 @@ h1 {
     display: flex;
     flex-direction: column;
     padding: 10px;
-    border: 1px solid #444;
-    border-radius: 5px;
-    background: #2a2a2a;
+    background: #1c1c1c;
+    border-radius: 10px;
+    border: 1px solid #333;
+    box-shadow: inset 0px 4px 10px rgba(0, 0, 0, 0.5);
 }
 
 /* Message Bubbles */
 .message {
-    max-width: 80%;
-    padding: 10px;
-    margin: 5px 0;
+    max-width: 75%;
+    padding: 12px 16px;
+    margin: 8px 0;
     border-radius: 10px;
     opacity: 0;
-    animation: fadeIn 0.5s ease-in-out forwards, slideUp 0.3s ease-in-out;
+    animation: fadeIn 0.5s ease-in-out forwards, slideUp 0.5s ease-in-out;
 }
 
 /* Bot Messages */
 .bot-message {
     background: #444;
-    color: #fff;
+    color: #eee;
     align-self: flex-start;
+    border-left: 3px solid #ff6f50;
+    box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2);
 }
 
 /* User Messages */
@@ -73,6 +78,8 @@ h1 {
     background: #ff4b2b;
     color: white;
     align-self: flex-end;
+    border-right: 3px solid #fff;
+    box-shadow: 2px 2px 10px rgba(255, 255, 255, 0.2);
 }
 
 /* Typing Indicator */
@@ -89,36 +96,46 @@ h1 {
 /* Input Section */
 .input-area {
     display: flex;
+    gap: 10px;
     padding: 10px;
     border-top: 1px solid #333;
-    background: #1e1e1e;
+    background: linear-gradient(145deg, #2a2a2a, #1e1e1e);
+    border-radius: 10px;
+    box-shadow: inset 0px 3px 10px rgba(0, 0, 0, 0.5);
 }
 
 input {
     flex: 1;
-    padding: 10px;
-    border: none;
-    outline: none;
-    font-size: 16px;
-    background: #2a2a2a;
-    color: white;
+    padding: 12px;
+    font-size: 1rem;
+    border: 1px solid #444;
     border-radius: 5px;
+    background: #2a2a2a;
+    color: #fff;
+    outline: none;
+    box-shadow: inset 0px 2px 4px rgba(0, 0, 0, 0.5);
+    transition: border-color 0.3s ease;
+}
+
+input:focus {
+    border-color: #ff6f50;
+    background: #333;
 }
 
 /* Button Styling */
 button {
-    background: #ff4b2b;
+    padding: 12px 20px;
+    font-size: 1.1rem;
+    font-weight: bold;
     color: white;
+    background: #ff4b2b;
     border: none;
-    padding: 10px 20px;
-    font-size: 1.2rem;
-    cursor: pointer;
     border-radius: 5px;
-    margin-left: 10px;
-    transition: transform 0.2s ease-in-out, background 0.3s;
+    cursor: pointer;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, background 0.3s ease;
 }
 
-/* Button Hover Effect */
 button:hover {
     transform: scale(1.05);
     background: #ff6f50;
