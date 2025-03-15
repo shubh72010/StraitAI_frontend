@@ -1,6 +1,6 @@
 const chatBox = document.getElementById("chat-box");
 const userInput = document.getElementById("user-input");
-const API_URL = "/api/chat";
+const API_URL = "https://straitai-backend.onrender.com/api/chat";
 
 function sendMessage() {
     let message = userInput.value.trim();
@@ -11,65 +11,44 @@ function sendMessage() {
     userInput.value = "";
 
     // Show AI "thinking..." animation
-    let thinkingMessage = displayMessage("Strait-AI", "AI is thinking", "bot-message", true);
+    let thinkingMessage = displayMessage("Strait-AI", "AI is thinking...", "bot-message");
 
-    // Send to backend
+    // Send message to backend
     fetch(API_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ query: message })
     })
-    .then(response => response.json())
+    .then(response => {
+        if (!response.ok) throw new Error("Network response was not ok");
+        return response.json();
+    })
     .then(data => {
-        // Remove AI "thinking..." animation
+        // Remove thinking message
         chatBox.removeChild(thinkingMessage);
+        // Display AI response
         displayMessage("Strait-AI", data.response, "bot-message");
     })
     .catch(error => {
         chatBox.removeChild(thinkingMessage);
         displayMessage("Strait-AI", "Error: Could not connect to AI.", "bot-message");
+        console.error("Error:", error);
     });
 }
 
-function displayMessage(name, text, type, isThinking = false) {
+function displayMessage(name, text, type) {
     let messageDiv = document.createElement("div");
-    messageDiv.classList.add("message", "slide-in", type);
+    messageDiv.classList.add("message", type);
 
     let nameDiv = document.createElement("div");
-    nameDiv.classList.add("username");
     nameDiv.textContent = name;
+    messageDiv.appendChild(nameDiv);
 
     let textDiv = document.createElement("div");
-    textDiv.classList.add("text");
     textDiv.textContent = text;
-    
-    if (isThinking) {
-        textDiv.classList.add("typing");
-        animateDots(textDiv);
-    }
-
-    messageDiv.appendChild(nameDiv);
     messageDiv.appendChild(textDiv);
-    chatBox.appendChild(messageDiv);
 
+    chatBox.appendChild(messageDiv);
     chatBox.scrollTop = chatBox.scrollHeight;
     return messageDiv;
-}
-
-// Thinking animation: cycles through ".", "..", "..."
-function animateDots(element) {
-    let dots = ["AI is thinking.", "AI is thinking..", "AI is thinking..."];
-    let count = 0;
-
-    let interval = setInterval(() => {
-        element.textContent = dots[count % dots.length];
-        count++;
-    }, 500);
-
-    element.dataset.interval = interval;
-}
-
-// Stop animation when AI responds
-function stopAnimation(element) {
-    clearInterval(element.dataset.interval);
 }
