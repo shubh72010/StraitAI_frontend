@@ -83,7 +83,7 @@ function animateDots(element) {
 }
 
 // Utility function: Fetch with timeout
-function fetchWithTimeout(url, options, timeout = 600000) {
+function fetchWithTimeout(url, options, timeout = 6000000000) {
     return Promise.race([
         fetch(url, options),
         new Promise((_, reject) =>
